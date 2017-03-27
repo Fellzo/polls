@@ -14,6 +14,7 @@ final class Option
     private $type;
     private $value;
     private $questionId = null;
+    private $id = null;
 
     public function __construct(string $text, int $value, int $type = self::ONE_ANSWER)
     {
@@ -29,10 +30,12 @@ final class Option
     }
 
 
-    public function render()
+    public function render(): string
     {
         $type = $this->type == self::ONE_ANSWER? "radio" : "checkbox";
-        $template = "<input type='{$type}' id='option'>";
+        $template = "<input type='{$type}' id='option_{$this->id}' name='option_{$this->questionId}' value='{$this->value}'>
+                     <label for='option_{$this->id}'>{$this->textOfOption}</label>";
+        return $template;
     }
 
     /**
@@ -74,6 +77,6 @@ final class Option
 
     public function save()
     {
-        Database::getInstance()->createOption($this);
+        $this->id = Database::getInstance()->createOption($this);
     }
 }

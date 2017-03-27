@@ -40,7 +40,7 @@ final class Question
     /**
      * @return int
      */
-    public function getPollId()
+    public function getPollId(): int
     {
         return $this->pollId;
     }
@@ -73,6 +73,22 @@ final class Question
     public function getType(): int
     {
         return $this->type;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
+     * @return null
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
 }

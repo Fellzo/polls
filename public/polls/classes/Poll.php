@@ -4,9 +4,14 @@ require_once "Database.php";
 
 final class Poll
 {
-
+    /**
+     * @var string
+     */
     private $name = "";
     private $description = "";
+    /**
+     * @var Question
+     */
     private $questions = [];
     private $binded = false;
     private $id = null;
@@ -68,5 +73,31 @@ final class Poll
     public function saveAll()
     {
         $this->bindQuestions();
+    }
+
+    public function render(): string
+    {
+        if (is_null($this->id)) {
+            throw new Error("Poll is not created;");
+        }
+        $questions = "";
+        foreach ($this->questions as $question) {
+            $question_id = $question->getId();
+            $question_text = $question->getQuestion();
+            $questions .= "<div id='questiond_{$question_id}' class='question_text'>{$question_text}</div>";
+            $questions .= "<ul>";
+            foreach ($question->getOptions() as $option) {
+                $option_html = $option->render();
+                $questions .= "<li>{$option_html}</li>";
+            }
+            $questions .= "</ul>";
+        }
+        $html = "
+        <form method='post' action='vote.php'>
+            <input type='hidden' value='{$this->id}' name='poll_id'>
+            {$questions}
+        </form>
+        ";
+        return $html;
     }
 }
