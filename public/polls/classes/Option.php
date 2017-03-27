@@ -65,6 +65,7 @@ final class Option
     public function bindToQuestion(int $question_id)
     {
         $this->questionId = $question_id;
+        return $this;
     }
 
     /**

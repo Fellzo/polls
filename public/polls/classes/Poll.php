@@ -68,18 +68,17 @@ final class Poll
             $question->bindOptions();
         }
         $this->binded = true;
+        return $this;
     }
 
     public function saveAll()
     {
         $this->bindQuestions();
+        return $this;
     }
 
     public function render(): string
     {
-        if (is_null($this->id)) {
-            throw new Error("Poll is not created;");
-        }
         $questions = "";
         foreach ($this->questions as $question) {
             $question_id = $question->getId();
@@ -99,5 +98,14 @@ final class Poll
         </form>
         ";
         return $html;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id)
+    {
+        $this->id = $id;
+        return $this;
     }
 }

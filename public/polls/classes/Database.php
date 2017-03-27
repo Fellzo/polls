@@ -51,5 +51,23 @@ final class Database
         return (self::$capsule)::table("options")->insertGetId([
             "question_id" => $option->getQuestionId(), "answer" => $option->getTextOfOption(), "value" => $option->getValue()]);
     }
+
+
+    public function getFullPollData(int $pollId)
+    {
+        $pollData = (self::$capsule)::table("polls")->select()->where('id', '=', $pollId)->first();
+        $questionsData = (self::$capsule)::table("questions")->select()->where("poll_id", "=", $pollData->id)->get();
+        $questions = [];
+        foreach ($questionsData as $questionData) {
+            $options = [];
+            $optionsData = (self::$capsule)::table("options")->select()->where("question_id", "=", $questionData->id)->get();
+            foreach ($optionsData as $optionData) {
+                $options[] = (new Option($optionData->answer, $optionData->value, $questionData->type))
+                    ->bindToQuestion($questionData->id);
+            }
+            $questions[] = new Question($questionData->question, $questionData->type, $options);
+        }
+        return (new Poll($pollData->name, $pollData->description, $questions))->setId($pollData->id);
+    }
 }
 

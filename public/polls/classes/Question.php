@@ -19,7 +19,7 @@ final class Question
         if (sizeof($options) == 0) {
             throw new Error("Question must contain at least one option.");
         }
-        if ($this->type > 1) {
+        if ($this->type) {
             throw new Error("Unavailable type.");
         }
         $this->type = $type;
@@ -34,6 +34,7 @@ final class Question
     public function bindToPoll(int $poll_id)
     {
         $this->pollId = $poll_id;
+        return $this;
     }
 
 
@@ -84,7 +85,7 @@ final class Question
     }
 
     /**
-     * @return null
+     * @return int
      */
     public function getId()
     {

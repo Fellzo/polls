@@ -8,9 +8,7 @@
     require_once "classes/Poll.php";
     require_once "classes/Question.php";
     require_once "classes/Option.php";
+    require_once "classes/Database.php";
 
-    $options = [new Option('kek?', 23), new Option('dek?', 1)];
-    $question = new Question('Yoba eto ti?', 0, $options);
-    $poll = new Poll('Allah', 'Bugurt', [$question]);
-    $poll->saveAll();
-    echo "All are saved";
+    $poll = Database::getInstance()->getFullPollData(17);
+    echo $poll->render();
