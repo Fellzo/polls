@@ -58,6 +58,15 @@ final class Poll
         return $this->questions;
     }
 
+    /**
+     * @param int $id
+     */
+    public function setId(int $id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
     private function bindQuestions()
     {
         if (is_null($this->id)) {
@@ -83,29 +92,25 @@ final class Poll
         foreach ($this->questions as $question) {
             $question_id = $question->getId();
             $question_text = $question->getQuestion();
+
             $questions .= "<div id='questiond_{$question_id}' class='question_text'>{$question_text}</div>";
-            $questions .= "<ul>";
+            $questions .= "<ul class='question'>";
             foreach ($question->getOptions() as $option) {
                 $option_html = $option->render();
                 $questions .= "<li>{$option_html}</li>";
             }
-            $questions .= "</ul>";
+            $questions .= "</ul><hr>";
         }
         $html = "
-        <form method='post' action='vote.php'>
-            <input type='hidden' value='{$this->id}' name='poll_id'>
+        <h1>{$this->name}</h1>
+        <div class='poll_description' id='description_{$this->id}'>{$this->description}</div>
+        <hr>
+        <form method='post'>
+            <input type='hidden' value='{$this->id}' name='poll[poll_id]'>
             {$questions}
+            <button>Отправить ответы</button>
         </form>
         ";
         return $html;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId(int $id)
-    {
-        $this->id = $id;
-        return $this;
     }
 }

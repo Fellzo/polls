@@ -22,7 +22,7 @@ final class Option
             throw new Error("Length of answer text must be less of equal 2000 chars.");
         }
         $this->textOfOption = $text;
-        if ($type > 1 || $type < 0) {
+        if (array_search($type, self::$available_types) === false) {
             throw new Error("Unavailable type.");
         }
         $this->type = $type;
@@ -33,7 +33,13 @@ final class Option
     public function render(): string
     {
         $type = $this->type == self::ONE_ANSWER? "radio" : "checkbox";
-        $template = "<input type='{$type}' id='option_{$this->id}' name='option_{$this->questionId}' value='{$this->value}'>
+        $checked = "";
+        // Restore checked radio
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $checked = $_POST["poll"]["answers"][$this->questionId] == $this->value ? "checked" : "";
+        }
+        $template = "<input type='{$type}' id='option_{$this->id}' name='poll[answers][{$this->questionId}]' 
+                     value='{$this->value}' {$checked}>
                      <label for='option_{$this->id}'>{$this->textOfOption}</label>";
         return $template;
     }

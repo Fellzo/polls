@@ -56,6 +56,9 @@ final class Database
     public function getFullPollData(int $pollId)
     {
         $pollData = (self::$capsule)::table("polls")->select()->where('id', '=', $pollId)->first();
+        if (is_null($pollData)) {
+            throw new Error("Poll not found");
+        }
         $questionsData = (self::$capsule)::table("questions")->select()->where("poll_id", "=", $pollData->id)->get();
         $questions = [];
         foreach ($questionsData as $questionData) {

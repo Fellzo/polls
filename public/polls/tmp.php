@@ -11,4 +11,5 @@
     require_once "classes/Database.php";
 
     $poll = Database::getInstance()->getFullPollData(17);
-    echo $poll->render();
+    # echo $poll->render();
+    require_once "template.php";
