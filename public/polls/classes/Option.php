@@ -36,10 +36,10 @@ final class Option
         $checked = "";
         // Restore checked radio
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $checked = $_POST["poll"]["answers"][$this->questionId] == $this->value ? "checked" : "";
+            $checked = $_POST["poll"]["answers"][$this->questionId] == $this->id ? "checked" : "";
         }
         $template = "<input type='{$type}' id='option_{$this->id}' name='poll[answers][{$this->questionId}]' 
-                     value='{$this->value}' {$checked}>
+                     value='{$this->id}' {$checked}>
                      <label for='option_{$this->id}'>{$this->textOfOption}</label>";
         return $template;
     }
@@ -85,5 +85,14 @@ final class Option
     public function save()
     {
         $this->id = Database::getInstance()->createOption($this);
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id): Option
+    {
+        $this->id = $id;
+        return $this;
     }
 }

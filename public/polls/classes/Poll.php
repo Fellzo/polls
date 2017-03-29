@@ -113,4 +113,25 @@ final class Poll
         ";
         return $html;
     }
+
+    public function isValid(array $data): bool
+    {
+        if (!is_numeric($data["poll_id"]) || $this->id != intval($data["poll_id"])) {
+            return false;
+        }
+        foreach ($data["answers"] as $key => $val) {
+            if (!is_numeric($key) || !is_numeric($val)) {
+                return false;
+            }
+        }
+        return sizeof($data["answers"]) == sizeof($this->questions);
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 }

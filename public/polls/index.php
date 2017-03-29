@@ -15,6 +15,14 @@
     require_once "classes/Question.php";
     require_once "classes/Option.php";
     $poll = Database::getInstance()->getFullPollData(1);
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ($poll->isValid($_POST["poll"])) {
+            Database::getInstance()->saveAnswers($_POST["poll"]);
+            header("redirect: polls/statistic?poll_id=" . $poll->getId());
+        } else {
+            $error = "<div class='error'>Ошибка при заполнение формы. Пожалуйста, проверьте введенные данные.</div>";
+        }
+    }
     require_once "template.php";
 ?>
 </body>

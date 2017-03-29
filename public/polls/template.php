@@ -25,11 +25,19 @@
             font-size: 14pt;
             font-weight: bold;
         }
+
+        .error {
+            font-size: 14pt;
+            font-weight: bolder;
+            color: red;
+        }
     </style>
 </head>
 <body>
     <div id="content">
        <?php
+       /** @var string $error */
+       echo $error;
        /** @var Poll $poll */
        echo $poll->render();
        ?>

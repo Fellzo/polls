@@ -53,7 +53,7 @@ final class Database
     }
 
 
-    public function getFullPollData(int $pollId)
+    public function getFullPollData(int $pollId): Poll
     {
         $pollData = (self::$capsule)::table("polls")->select()->where('id', '=', $pollId)->first();
         if (is_null($pollData)) {
@@ -66,11 +66,24 @@ final class Database
             $optionsData = (self::$capsule)::table("options")->select()->where("question_id", "=", $questionData->id)->get();
             foreach ($optionsData as $optionData) {
                 $options[] = (new Option($optionData->answer, $optionData->value, $questionData->type))
-                    ->bindToQuestion($questionData->id);
+                    ->bindToQuestion($questionData->id)->setId($optionData->id);
             }
             $questions[] = new Question($questionData->question, $questionData->type, $options);
         }
         return (new Poll($pollData->name, $pollData->description, $questions))->setId($pollData->id);
+    }
+
+    public function saveAnswers(array $data): bool
+    {
+        $poll_id = intval($data["poll_id"]);
+        $answers = [];
+        foreach ($data["answers"] as $key => $val) {
+            $answers[] = ["poll_id" => $poll_id, "question_id" => intval($key), "option_id" => intval($val)];
+        }
+        foreach ($answers as $answer) {
+            (self::$capsule)::table("answers")->insert($answer);
+        }
+        return true;
     }
 }
 
