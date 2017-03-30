@@ -15,10 +15,15 @@
     require_once "classes/Question.php";
     require_once "classes/Option.php";
     $poll = Database::getInstance()->getFullPollData(1);
+    if (isset($_COOKIE["poll-{$poll->getId()}"])) {
+        header("Location: /polls/statistic.php?poll_id=" . $poll->getId());
+    }
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($poll->isValid($_POST["poll"])) {
             Database::getInstance()->saveAnswers($_POST["poll"]);
-            header("redirect: polls/statistic?poll_id=" . $poll->getId());
+            // Lifetime of cookie 2 month
+            setcookie("poll-{$poll->getId()}", "finished", time() + 60 * 60 * 24 * 60);
+            header("Location: /polls/statistic.php?result=ok&poll_id=" . $poll->getId());
         } else {
             $error = "<div class='error'>Ошибка при заполнение формы. Пожалуйста, проверьте введенные данные.</div>";
         }

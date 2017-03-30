@@ -16,6 +16,11 @@ final class Poll
     private $binded = false;
     private $id = null;
 
+    const POLL_MODE = 0;
+    const STATISTIC_MODE = 1;
+
+    private $curr_mode = self::POLL_MODE;
+
     public function __construct(string $name, string $description, array $questions)
     {
         $this->name = $name;
@@ -95,9 +100,15 @@ final class Poll
 
             $questions .= "<div id='questiond_{$question_id}' class='question_text'>{$question_text}</div>";
             $questions .= "<ul class='question'>";
+            if ($this->curr_mode == self::STATISTIC_MODE) {
+                $question_statistic = Database::getInstance()->getQuestionStatistic($question_id);
+            }
             foreach ($question->getOptions() as $option) {
-                $option_html = $option->render();
-                $questions .= "<li>{$option_html}</li>";
+                $option_html = $option->render($this->curr_mode);
+                if ($this->curr_mode == self::STATISTIC_MODE) {
+                    $option_statistic = $question_statistic[$option->getValue()];
+                }
+                $questions .= "<li>{$option_html}{$option_statistic}</li>";
             }
             $questions .= "</ul><hr>";
         }
@@ -108,9 +119,11 @@ final class Poll
         <form method='post'>
             <input type='hidden' value='{$this->id}' name='poll[poll_id]'>
             {$questions}
-            <button>Отправить ответы</button>
-        </form>
         ";
+        if ($this->curr_mode == self::POLL_MODE) {
+            $html .= "<button>Отправить ответы</button>>";
+        }
+        $html .= "</form>";
         return $html;
     }
 
@@ -133,5 +146,15 @@ final class Poll
     public function getId()
     {
         return $this->id;
+    }
+
+    public function setCurrMode(int $mode = self::POLL_MODE)
+    {
+        if ($mode == self::POLL_MODE or $mode == self::STATISTIC_MODE) {
+            $this->curr_mode = $mode;
+            return $this;
+        } else {
+            throw new Error("Wrong mode.");
+        }
     }
 }

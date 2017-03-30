@@ -92,4 +92,10 @@ final class Question
         return $this->id;
     }
 
+    public function setId(int $id): Question
+    {
+        $this->id = $id;
+        return $this;
+    }
+
 }

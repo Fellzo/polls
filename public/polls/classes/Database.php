@@ -63,12 +63,12 @@ final class Database
         $questions = [];
         foreach ($questionsData as $questionData) {
             $options = [];
-            $optionsData = (self::$capsule)::table("options")->select()->where("question_id", "=", $questionData->id)->get();
+            $optionsData = $this->getQuestionOptions($questionData->id);
             foreach ($optionsData as $optionData) {
                 $options[] = (new Option($optionData->answer, $optionData->value, $questionData->type))
                     ->bindToQuestion($questionData->id)->setId($optionData->id);
             }
-            $questions[] = new Question($questionData->question, $questionData->type, $options);
+            $questions[] = (new Question($questionData->question, $questionData->type, $options))->setId($questionData->id);
         }
         return (new Poll($pollData->name, $pollData->description, $questions))->setId($pollData->id);
     }
@@ -84,6 +84,23 @@ final class Database
             (self::$capsule)::table("answers")->insert($answer);
         }
         return true;
+    }
+
+    public function getQuestionOptions(int $questionId)
+    {
+        return (self::$capsule)::table("options")->where("question_id", "=", $questionId)->get();
+    }
+
+    public function getQuestionStatistic(int $questionId)
+    {
+        $options = $this->getQuestionOptions($questionId);
+        $statistic = ["number_of_answers" =>
+                        sizeof((self::$capsule)::table("answers")->where("question_id", "=", $questionId)->get())];
+        foreach ($options as $option) {
+            $statistic[$option->value] =
+                sizeof((self::$capsule)::table("answers")->where("option_id", "=", $option->id)->get());
+        }
+        return $statistic;
     }
 }
 

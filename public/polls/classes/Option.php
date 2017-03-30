@@ -30,7 +30,7 @@ final class Option
     }
 
 
-    public function render(): string
+    public function render(int $mode): string
     {
         $type = $this->type == self::ONE_ANSWER? "radio" : "checkbox";
         $checked = "";
@@ -38,8 +38,10 @@ final class Option
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $checked = $_POST["poll"]["answers"][$this->questionId] == $this->id ? "checked" : "";
         }
+        $disabled = $mode == Poll::STATISTIC_MODE? "disabled" : "";
+
         $template = "<input type='{$type}' id='option_{$this->id}' name='poll[answers][{$this->questionId}]' 
-                     value='{$this->id}' {$checked}>
+                     value='{$this->id}' {$checked} {$disabled}>
                      <label for='option_{$this->id}'>{$this->textOfOption}</label>";
         return $template;
     }
