@@ -35,6 +35,7 @@
 </head>
 <body>
     <div id="content">
+        <div id="chart"></div>
        <?php
        /** @var string $error */
        echo $error;

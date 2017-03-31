@@ -94,8 +94,7 @@ final class Database
     public function getQuestionStatistic(int $questionId)
     {
         $options = $this->getQuestionOptions($questionId);
-        $statistic = ["number_of_answers" =>
-                        sizeof((self::$capsule)::table("answers")->where("question_id", "=", $questionId)->get())];
+        $statistic = [];
         foreach ($options as $option) {
             $statistic[$option->value] =
                 sizeof((self::$capsule)::table("answers")->where("option_id", "=", $option->id)->get());

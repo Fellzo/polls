@@ -99,7 +99,8 @@ final class Poll
             $question_text = $question->getQuestion();
 
             $questions .= "<div id='questiond_{$question_id}' class='question_text'>{$question_text}</div>";
-            $questions .= "<ul class='question'>";
+            $hidden = $this->curr_mode == self::STATISTIC_MODE? "hidden" : "";
+            $questions .= "<ul class='question' id='{$question_id}' {$hidden}>";
             if ($this->curr_mode == self::STATISTIC_MODE) {
                 $question_statistic = Database::getInstance()->getQuestionStatistic($question_id);
             }
@@ -108,11 +109,16 @@ final class Poll
                 if ($this->curr_mode == self::STATISTIC_MODE) {
                     $option_statistic = $question_statistic[$option->getValue()];
                 }
-                $questions .= "<li>{$option_html}{$option_statistic}</li>";
+                $questions .= "<li option_num='{$option_statistic}'>
+                                    {$option_html}     
+                               </li>";
             }
-            $questions .= "</ul><hr>";
+            $questions .= "</ul>
+                            <div id='chart_{$question_id}'></div>
+                            <hr>";
         }
         $html = "
+        <div id='poll_{$this->id}'>
         <h1>{$this->name}</h1>
         <div class='poll_description' id='description_{$this->id}'>{$this->description}</div>
         <hr>
@@ -121,9 +127,9 @@ final class Poll
             {$questions}
         ";
         if ($this->curr_mode == self::POLL_MODE) {
-            $html .= "<button>Отправить ответы</button>>";
+            $html .= "<button>Отправить ответы</button>";
         }
-        $html .= "</form>";
+        $html .= "</form></div>";
         return $html;
     }
 
